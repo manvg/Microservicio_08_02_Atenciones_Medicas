@@ -20,8 +20,8 @@ public class Paciente {
     private int idPaciente;
     @Column(name = "rut")
     private String rut;
-    @Column(name = "nombres")
-    private String nombres;
+    @Column(name = "nombre")
+    private String nombre;
     @Column(name = "apellido_paterno")
     private String apellidoPaterno;
     @Column(name = "apellido_materno")
@@ -29,9 +29,8 @@ public class Paciente {
     @Column(name = "genero")
     private String genero;
 
-    @OneToMany(targetEntity = Paciente.class, fetch = FetchType.LAZY, mappedBy = "atencion_medica")
-    private List<AtencionMedica> atencionesMedicas;
-
+    @OneToMany(targetEntity = AtencionMedica.class, fetch = FetchType.LAZY, mappedBy = "Paciente")
+    private List<AtencionMedica> listaUsuarios;
     public int getIdPaciente() {
         return idPaciente;
     }
@@ -48,12 +47,12 @@ public class Paciente {
         this.rut = rut;
     }
 
-    public String getNombres() {
-        return nombres;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getApellidoPaterno() {

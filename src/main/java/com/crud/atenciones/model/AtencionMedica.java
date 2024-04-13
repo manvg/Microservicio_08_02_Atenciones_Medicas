@@ -2,6 +2,7 @@ package com.crud.atenciones.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ public class AtencionMedica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_atencion_medica")
     private int idAtencionMedica;
+
     @Column(name = "especialidad")
     private String especialidad;
 
@@ -28,7 +30,7 @@ public class AtencionMedica {
     @Column(name = "tratamiento")
     private String tratamiento;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Paciente.class)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 
