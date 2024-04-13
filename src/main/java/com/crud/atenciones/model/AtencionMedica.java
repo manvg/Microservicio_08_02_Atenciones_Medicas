@@ -1,5 +1,6 @@
 package com.crud.atenciones.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +31,7 @@ public class AtencionMedica {
     @Column(name = "tratamiento")
     private String tratamiento;
 
-    @ManyToOne(targetEntity = Paciente.class)
+    @ManyToOne(targetEntity = Paciente.class, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 

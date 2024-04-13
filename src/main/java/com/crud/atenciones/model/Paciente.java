@@ -29,8 +29,8 @@ public class Paciente {
     @Column(name = "genero")
     private String genero;
 
-    @OneToMany(targetEntity = AtencionMedica.class, fetch = FetchType.LAZY, mappedBy = "Paciente")
-    private List<AtencionMedica> listaUsuarios;
+    @OneToMany(targetEntity = AtencionMedica.class, fetch = FetchType.LAZY, mappedBy = "paciente")
+    private List<AtencionMedica> listaAtencionesMedicas;
     public int getIdPaciente() {
         return idPaciente;
     }
@@ -77,13 +77,5 @@ public class Paciente {
 
     public void setGenero(String genero) {
         this.genero = genero;
-    }
-
-    public List<AtencionMedica> getAtencionesMedicas() {
-        return atencionesMedicas;
-    }
-
-    public void setAtencionesMedicas(List<AtencionMedica> atencionesMedicas) {
-        this.atencionesMedicas = atencionesMedicas;
     }
 }
