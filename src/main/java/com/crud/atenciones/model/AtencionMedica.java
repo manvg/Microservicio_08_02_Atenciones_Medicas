@@ -1,25 +1,32 @@
 package com.crud.atenciones.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "atencion_medica")
 public class AtencionMedica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_atencion_medica")
     private int idAtencionMedica;
-    @Column(name = "medico_atencion")
-    private String medicoAtencion;
-    @Column(name = "diagnostico")
-    private String diagnostico;
-    @Column(name = "tratamiento")
-    private String tratamiento;
     @Column(name = "especialidad")
     private String especialidad;
+
+    @Column(name = "nombre_medico")
+    private String nombreMedico;
+
+    @Column(name = "diagnostico")
+    private String diagnostico;
+
+    @Column(name = "tratamiento")
+    private String tratamiento;
 
     @ManyToOne
     @JoinColumn(name = "id_paciente")
@@ -33,12 +40,12 @@ public class AtencionMedica {
         this.idAtencionMedica = idAtencionMedica;
     }
 
-    public String getMedicoAtencion() {
-        return medicoAtencion;
+    public String getNombreMedico() {
+        return nombreMedico;
     }
 
-    public void setMedicoAtencion(String medicoAtencion) {
-        this.medicoAtencion = medicoAtencion;
+    public void setMedicoAtencion(String nombreMedico) {
+        this.nombreMedico = nombreMedico;
     }
 
     public String getDiagnostico() {
