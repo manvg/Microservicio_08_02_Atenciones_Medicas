@@ -1,4 +1,4 @@
-package com.crud.atenciones.service;
+package com.crud.atenciones.service.AtencionMedica;
 
 import java.util.List;
 import java.util.Optional;

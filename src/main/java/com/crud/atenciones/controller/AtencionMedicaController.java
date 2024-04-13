@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.model.AtencionMedica;
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.service.AtencionMedicaService;
+import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
 
 @RestController
 @RequestMapping("/atenciones")
