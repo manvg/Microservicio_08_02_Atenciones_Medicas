@@ -23,4 +23,9 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     public Optional<AtencionMedica> getAtencionMedicaById(Integer id){
         return atencionMedicaRepository.findById(id);
     }
+
+    @Override
+    public AtencionMedica createAtencionMedica(AtencionMedica atencionMedica){
+        return atencionMedicaRepository.save(atencionMedica);
+    }
 }
