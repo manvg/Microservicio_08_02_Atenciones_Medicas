@@ -1,4 +1,4 @@
-package com.crud.atenciones.model;
+package com.crud.atenciones.model.entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "atencion_medica")
@@ -23,23 +24,26 @@ public class AtencionMedica {
 
     @Column(name = "especialidad")
     @NotNull
+    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 100 caracteres")
     private String especialidad;
 
     @Column(name = "nombre_medico")
     @NotNull
+    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 150 caracteres")
     private String nombreMedico;
 
     @Column(name = "diagnostico")
     @NotNull
+    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
     private String diagnostico;
 
     @Column(name = "tratamiento")
     @NotNull
+    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
     private String tratamiento;
 
-    @ManyToOne(targetEntity = Paciente.class, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = Paciente.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_paciente")
-    @NotNull
     private Paciente paciente;
 
     public int getIdAtencionMedica() {

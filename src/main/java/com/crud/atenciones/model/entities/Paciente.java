@@ -1,4 +1,4 @@
-package com.crud.atenciones.model;
+package com.crud.atenciones.model.entities;
 
 import java.util.List;
 
@@ -10,6 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "paciente")
@@ -18,15 +21,26 @@ public class Paciente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_paciente")
     private int idPaciente;
+
     @Column(name = "rut")
+    @Pattern(regexp = "\\d{7,8}-[\\dkK]", message = "RUT no válido")
     private String rut;
+
     @Column(name = "nombre")
+    @NotNull
+    @Size(min = 2, max = 100, message = "Debe tener entre 2 y 100 caracteres")
     private String nombre;
+
     @Column(name = "apellido_paterno")
+    @Size(min = 2, max = 100, message = "Debe tener entre 2 y 100 caracteres")
     private String apellidoPaterno;
+
     @Column(name = "apellido_materno")
+    @Size(min = 2, max = 100, message = "Debe tener entre 2 y 100 caracteres")
     private String apellidoMaterno;
+
     @Column(name = "genero")
+    @Pattern(regexp = "[MF]", message = "El campo género solo puede ser 'M' o 'F'")
     private String genero;
 
     @OneToMany(targetEntity = AtencionMedica.class, fetch = FetchType.LAZY, mappedBy = "paciente")
