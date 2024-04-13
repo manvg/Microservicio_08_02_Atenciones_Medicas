@@ -41,6 +41,16 @@ public class AtencionMedicaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("paciente/{rut}")
+    public ResponseEntity<Object> getAtencionesMedicasByRut(@PathVariable String rut){
+        var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
+        if (response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"El rut ingresado no existe."));
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     public ResponseEntity<Object> createAtencionMedica(@RequestBody @Validated AtencionMedica atencionMedica){
         var response = atencionMedicaService.createAtencionMedica(atencionMedica);

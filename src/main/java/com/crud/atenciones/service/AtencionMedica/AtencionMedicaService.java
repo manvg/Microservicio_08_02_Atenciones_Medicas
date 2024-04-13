@@ -9,6 +9,7 @@ import com.crud.atenciones.model.entities.AtencionMedica;
 
 public interface AtencionMedicaService {
     List<AtencionMedicaDto> getAllAtencionesMedicas();
+    List<AtencionMedicaDto> getAtencionesMedicasByRut(String rut);
     Optional<AtencionMedicaDto> getAtencionMedicaById(Integer id);
     AtencionMedica createAtencionMedica(AtencionMedica atencionMedica);
     AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica);

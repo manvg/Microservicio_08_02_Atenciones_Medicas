@@ -41,27 +41,49 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     }
 
     @Override
+    public List<AtencionMedicaDto> getAtencionesMedicasByRut(String rutPaciente){
+        //Obtener pacienet por rut
+        var paciente = pacienteRepository.findByRut(rutPaciente);
+        if (paciente.isEmpty()) {
+            return null;
+        }
+        var atencionesMedicas = atencionMedicaRepository.findByPaciente(paciente.get());
+        return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
+    }
+
+    @Override
     public AtencionMedica createAtencionMedica(AtencionMedica atencionMedica){
-        if (atencionMedica.getPaciente().getIdPaciente() == 0) {
+        var pacienteExistente = pacienteRepository.findByRut(atencionMedica.getPaciente().getRut());
+        if (pacienteExistente.isEmpty()) {
             //Si el paciente no existe guarda Atencion Medica y Paciente nuevos
             return atencionMedicaRepository.save(atencionMedica);
         }else{
-            //Valida existencia del paciente
-            var pacienteExistente = pacienteRepository.findById(atencionMedica.getPaciente().getIdPaciente());
-            if (!pacienteExistente.isEmpty()) {
-                AtencionMedica nuevaAtencionMedica = new AtencionMedica();
-                nuevaAtencionMedica.setDiagnostico(atencionMedica.getDiagnostico());
-                nuevaAtencionMedica.setEspecialidad(atencionMedica.getEspecialidad());
-                nuevaAtencionMedica.setMedicoAtencion(atencionMedica.getNombreMedico());
-                nuevaAtencionMedica.setTratamiento(atencionMedica.getTratamiento());
-        
-                nuevaAtencionMedica.setPaciente(pacienteExistente.get());
-
-                return atencionMedicaRepository.save(nuevaAtencionMedica);
-            }else{
-                //El id paciente ingresado no existe
-                return null;
+            AtencionMedica nuevaAtencionMedica = new AtencionMedica();
+            nuevaAtencionMedica.setDiagnostico(atencionMedica.getDiagnostico());
+            nuevaAtencionMedica.setEspecialidad(atencionMedica.getEspecialidad());
+            nuevaAtencionMedica.setMedicoAtencion(atencionMedica.getNombreMedico());
+            nuevaAtencionMedica.setTratamiento(atencionMedica.getTratamiento());
+            
+            // Obtener el paciente de la atención médica
+            Paciente paciente = atencionMedica.getPaciente();
+            if (paciente == null) {
+                paciente = new Paciente();
             }
+
+            // Actualizar los campos del paciente
+            paciente.setIdPaciente(pacienteExistente.get().getIdPaciente());
+            paciente.setRut(atencionMedica.getPaciente().getRut());
+            paciente.setNombre(atencionMedica.getPaciente().getNombre());
+            paciente.setApellidoPaterno(atencionMedica.getPaciente().getApellidoPaterno());
+            paciente.setApellidoMaterno(atencionMedica.getPaciente().getApellidoMaterno());
+            paciente.setGenero(atencionMedica.getPaciente().getGenero());
+
+            // Guardar o actualizar el paciente
+            paciente = pacienteRepository.save(paciente);
+            
+            nuevaAtencionMedica.setPaciente(paciente);
+
+            return atencionMedicaRepository.save(nuevaAtencionMedica);
         }
     }
 
@@ -70,8 +92,9 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     public AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica){
         if (atencionMedicaRepository.existsById(id)) {
              // Obtener la atención médica existente    por ID
-             AtencionMedica atencion = atencionMedicaRepository.findById(id).orElse(null);
-             if (atencion != null) {
+             var atencionExiste = atencionMedicaRepository.findById(id);
+             if (!atencionExiste.isEmpty()) {
+                AtencionMedica atencion = atencionExiste.get();
                  // Actualizar los campos de la atención médica
                  atencion.setDiagnostico(atencionMedica.getDiagnostico());
                  atencion.setEspecialidad(atencionMedica.getEspecialidad());
