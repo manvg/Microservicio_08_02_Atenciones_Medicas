@@ -69,7 +69,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     @Transactional
     public AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica){
         if (atencionMedicaRepository.existsById(id)) {
-             // Obtener la atención médica existente por ID
+             // Obtener la atención médica existente    por ID
              AtencionMedica atencion = atencionMedicaRepository.findById(id).orElse(null);
              if (atencion != null) {
                  // Actualizar los campos de la atención médica
@@ -97,12 +97,20 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
                  // Asignar el paciente actualizado a la atención médica y guardarla
                  atencion.setPaciente(paciente);
                  return atencionMedicaRepository.save(atencion);
+                }else{
+                    return null;
+                }
         }else{
             return null;
         }
-    }else{
-        return null;
     }
+
+    @Override
+    public void deleteAtencionMedica(Integer id){
+        if (atencionMedicaRepository.existsById(id)) {
+            atencionMedicaRepository.deleteById(id);
+        }
     }
+
 }
 

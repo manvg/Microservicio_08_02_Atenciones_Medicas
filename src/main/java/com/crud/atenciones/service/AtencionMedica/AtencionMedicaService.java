@@ -12,4 +12,5 @@ public interface AtencionMedicaService {
     Optional<AtencionMedicaDto> getAtencionMedicaById(Integer id);
     AtencionMedica createAtencionMedica(AtencionMedica atencionMedica);
     AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica);
+    void deleteAtencionMedica(Integer id);
 }
