@@ -1,8 +1,10 @@
 package com.crud.atenciones.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.model.ResponseModel;
@@ -49,6 +52,22 @@ public class AtencionMedicaController {
         var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
         if (response.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"El rut ingresado no existe."));
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/by-rango-fecha")
+    public ResponseEntity<Object> getAtencionMedicaByRangoFecha(@RequestParam(value = "fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio, @RequestParam(value = "fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {
+        if (fechaInicio.isAfter(fechaFin)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false, "La fecha de inicio no puede ser mayor que fecha de fin."));
+        }
+
+        List<AtencionMedicaDto> response = atencionMedicaService.getAtencionesMedicasByRangoFecha(fechaInicio, fechaFin);
+
+        if (response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseModel(false, "No se encontraron atenciones médicas para el rango de fechas especificado."));
         }
 
         return ResponseEntity.ok(response);

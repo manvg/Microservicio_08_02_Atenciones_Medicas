@@ -32,6 +32,8 @@ public class AtencionMedicaDto {
     @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
     private String tratamiento;
 
+    private String fechaAtencion;
+
     @Valid
     private PacienteDto paciente;
 }

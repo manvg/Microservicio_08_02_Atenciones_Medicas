@@ -1,5 +1,9 @@
 package com.crud.atenciones.model.entities;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,6 +34,10 @@ public class AtencionMedica {
 
     @Column(name = "tratamiento")
     private String tratamiento;
+
+    @Column(name = "fecha_atencion")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate fechaAtencion;
 
     @ManyToOne(targetEntity = Paciente.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_paciente")
@@ -73,6 +81,14 @@ public class AtencionMedica {
 
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public LocalDate getFechaAtencion(){
+        return fechaAtencion;
+    }
+
+    public void setFechaAtencion(LocalDate fechaAtencion){
+        this.fechaAtencion = fechaAtencion;
     }
 
     public Paciente getPaciente() {

@@ -1,7 +1,6 @@
 package com.crud.atenciones.utilities;
 
 import org.springframework.stereotype.Component;
-
 import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import org.modelmapper.ModelMapper;

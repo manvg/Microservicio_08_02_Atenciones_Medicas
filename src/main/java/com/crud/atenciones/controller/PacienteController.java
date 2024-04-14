@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.dto.PacienteDto;
-import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.service.Paciente.PacienteService;
 
 import jakarta.validation.Valid;
@@ -25,15 +24,15 @@ import jakarta.validation.Valid;
 public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
-    //Obtener listado completo de atenciones medicas
+    //Obtener listado completo de pacientes
     @GetMapping
-    public List<PacienteDto> getAllAtencionesMedicas(){
+    public List<PacienteDto> getAllPacientes(){
         return pacienteService.getAllPacientes();
     }
 
-    //Obtener todas las atenciones médicas de un paciente por su rut
+    //Obtener paciente por su rut
     @GetMapping("/{rut}")
-    public ResponseEntity<Object> getAtencionesMedicasByRut(@PathVariable String rut){
+    public ResponseEntity<Object> getPacienteByRut(@PathVariable String rut){
         if (!validarRut(rut)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"Rut no válido."));
         }
@@ -45,7 +44,7 @@ public class PacienteController {
         return ResponseEntity.ok(response);
     }
 
-    //Crear atención médica
+    //Crear paciente
     @PostMapping
     public ResponseEntity<Object> createPaciente(@RequestBody @Valid PacienteDto Paciente){
         var response = pacienteService.createPaciente(Paciente);
@@ -55,7 +54,7 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    //Actualizar atención médica
+    //Actualizar paciente
     @PutMapping("/{id}")
     public ResponseEntity<Object> updatePaciente(@PathVariable Integer id, @RequestBody @Valid PacienteDto Paciente){
         var response = pacienteService.updatePaciente(id, Paciente);

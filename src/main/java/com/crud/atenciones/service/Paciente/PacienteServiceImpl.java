@@ -5,21 +5,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.repository.PacienteRepository;
 import com.crud.atenciones.utilities.PacienteMapper;
-
-import jakarta.validation.Valid;
 
 @Service
 public class PacienteServiceImpl implements PacienteService{

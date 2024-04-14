@@ -1,5 +1,7 @@
 package com.crud.atenciones.service.AtencionMedica;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +40,12 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     }
 
     @Override
+    public List<AtencionMedicaDto> getAtencionesMedicasByRangoFecha(LocalDate fechaInicio, LocalDate fechaFin){
+        List<AtencionMedica> atencionesMedicas = atencionMedicaRepository.findByFechaAtencionBetween(fechaInicio, fechaFin);
+        return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
+    }
+
+    @Override
     public List<AtencionMedicaDto> getAtencionesMedicasByRut(String rutPaciente){
         var paciente = pacienteRepository.findByRut(rutPaciente);
         if (paciente.isEmpty()) {
@@ -51,14 +59,14 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     public AtencionMedica createAtencionMedica(AtencionMedicaDto atencionMedicaDto){
         var pacienteExistente = pacienteRepository.findByRut(atencionMedicaDto.getPaciente().getRut());
         if (pacienteExistente.isEmpty()) {
-            // Mapea DTO a entidad Atencion Medica
+            //Mapea DTO a entidad Atencion Medica
             AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
+            atencionMedica.setFechaAtencion(LocalDate.now());
             // Si el paciente no existe guarda Atencion Médica y Paciente nuevos
             return atencionMedicaRepository.save(atencionMedica);
         }else{
             //Mapea DTO a entidad Atencion Medica
             AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
-
             AtencionMedica nuevaAtencionMedica = new AtencionMedica();
             nuevaAtencionMedica.setDiagnostico(atencionMedica.getDiagnostico());
             nuevaAtencionMedica.setEspecialidad(atencionMedica.getEspecialidad());
@@ -83,7 +91,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
             paciente = pacienteRepository.save(paciente);
             
             nuevaAtencionMedica.setPaciente(paciente);
-
+            nuevaAtencionMedica.setFechaAtencion(LocalDate.now());
             return atencionMedicaRepository.save(nuevaAtencionMedica);
         }
     }
@@ -136,5 +144,9 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
         }
     }
 
+    private Date getDateNow(){
+        LocalDate localDate = LocalDate.now();
+        return Date.valueOf(localDate);
+    }
 }
 
