@@ -2,16 +2,22 @@ package com.crud.atenciones.service.Paciente;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.crud.atenciones.model.dto.AtencionMedicaDto;
+import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.repository.PacienteRepository;
+import com.crud.atenciones.utilities.PacienteMapper;
 
 import jakarta.validation.Valid;
 
@@ -19,10 +25,13 @@ import jakarta.validation.Valid;
 public class PacienteServiceImpl implements PacienteService{
     @Autowired
     private PacienteRepository pacienteRepository;
+    @Autowired
+    private PacienteMapper pacienteMapper;
 
     @Override
-    public List<Paciente> getAllPacientes(){
-        return pacienteRepository.findAll();
+    public List<PacienteDto> getAllPacientes(){
+        List<Paciente> pacientes = pacienteRepository.findAll();
+        return pacientes.stream().map(pacienteMapper::convertirADTO).collect(Collectors.toList());
     }
 
     @Override
@@ -31,12 +40,19 @@ public class PacienteServiceImpl implements PacienteService{
     }
 
     @Override
-    public Paciente createPaciente(Paciente paciente){
+    public Optional<Paciente> getPacienteByRut(String rut){
+        return pacienteRepository.findByRut(rut);
+    }
+
+    @Override
+    public Paciente createPaciente(PacienteDto pacienteDto){
+        Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
         return pacienteRepository.save(paciente);
     }
 
     @Override
-    public Paciente updatePaciente(Integer id, Paciente paciente){
+    public Paciente updatePaciente(Integer id, PacienteDto pacienteDto){
+        Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
         if (pacienteRepository.existsById(id)) {
             paciente.setIdPaciente(id);
             return pacienteRepository.save(paciente);

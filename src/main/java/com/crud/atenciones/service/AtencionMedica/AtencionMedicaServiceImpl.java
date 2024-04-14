@@ -15,9 +15,6 @@ import com.crud.atenciones.repository.PacienteRepository;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 import com.crud.atenciones.utilities.*;
 
 @Service
@@ -42,7 +39,6 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
 
     @Override
     public List<AtencionMedicaDto> getAtencionesMedicasByRut(String rutPaciente){
-        //Obtener pacienet por rut
         var paciente = pacienteRepository.findByRut(rutPaciente);
         if (paciente.isEmpty()) {
             return null;
@@ -55,10 +51,12 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     public AtencionMedica createAtencionMedica(AtencionMedicaDto atencionMedicaDto){
         var pacienteExistente = pacienteRepository.findByRut(atencionMedicaDto.getPaciente().getRut());
         if (pacienteExistente.isEmpty()) {
+            // Mapea DTO a entidad Atencion Medica
             AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
-            //Si el paciente no existe guarda Atencion Medica y Paciente nuevos
+            // Si el paciente no existe guarda Atencion Médica y Paciente nuevos
             return atencionMedicaRepository.save(atencionMedica);
         }else{
+            //Mapea DTO a entidad Atencion Medica
             AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
 
             AtencionMedica nuevaAtencionMedica = new AtencionMedica();
@@ -67,13 +65,13 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
             nuevaAtencionMedica.setMedicoAtencion(atencionMedica.getNombreMedico());
             nuevaAtencionMedica.setTratamiento(atencionMedica.getTratamiento());
             
-            // Obtener el paciente de la atención médica
+            //Obtener el paciente de la atención médica
             Paciente paciente = atencionMedica.getPaciente();
             if (paciente == null) {
                 paciente = new Paciente();
             }
 
-            // Actualizar los campos del paciente
+            //Actualizar los campos del paciente
             paciente.setIdPaciente(pacienteExistente.get().getIdPaciente());
             paciente.setRut(atencionMedica.getPaciente().getRut());
             paciente.setNombre(atencionMedica.getPaciente().getNombre());
@@ -81,7 +79,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
             paciente.setApellidoMaterno(atencionMedica.getPaciente().getApellidoMaterno());
             paciente.setGenero(atencionMedica.getPaciente().getGenero());
 
-            // Guardar o actualizar el paciente
+            //Guardar o actualizar el paciente
             paciente = pacienteRepository.save(paciente);
             
             nuevaAtencionMedica.setPaciente(paciente);
@@ -92,17 +90,17 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
 
     @Override
     @Transactional
-    public AtencionMedica updateAtencionMedica(Integer id, AtencionMedicaDto atencionMedica){
+    public AtencionMedica updateAtencionMedica(Integer id, AtencionMedicaDto atencionMedicaDto){
         if (atencionMedicaRepository.existsById(id)) {
-             // Obtener la atención médica existente    por ID
+             //Obtener la atención médica existente por ID
              var atencionExiste = atencionMedicaRepository.findById(id);
              if (!atencionExiste.isEmpty()) {
                 AtencionMedica atencion = atencionExiste.get();
-                 // Actualizar los campos de la atención médica
-                 atencion.setDiagnostico(atencionMedica.getDiagnostico());
-                 atencion.setEspecialidad(atencionMedica.getEspecialidad());
-                 atencion.setMedicoAtencion(atencionMedica.getNombreMedico());
-                 atencion.setTratamiento(atencionMedica.getTratamiento());
+                 //Actualizar los campos de la atención médica
+                 atencion.setDiagnostico(atencionMedicaDto.getDiagnostico());
+                 atencion.setEspecialidad(atencionMedicaDto.getEspecialidad());
+                 atencion.setMedicoAtencion(atencionMedicaDto.getNombreMedico());
+                 atencion.setTratamiento(atencionMedicaDto.getTratamiento());
  
                  // Obtener el paciente de la atención médica
                  Paciente paciente = atencion.getPaciente();
@@ -111,16 +109,16 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
                  }
  
                  // Actualizar los campos del paciente
-                 paciente.setRut(atencionMedica.getPaciente().getRut());
-                 paciente.setNombre(atencionMedica.getPaciente().getNombre());
-                 paciente.setApellidoPaterno(atencionMedica.getPaciente().getApellidoPaterno());
-                 paciente.setApellidoMaterno(atencionMedica.getPaciente().getApellidoMaterno());
-                 paciente.setGenero(atencionMedica.getPaciente().getGenero());
+                 paciente.setRut(atencionMedicaDto.getPaciente().getRut());
+                 paciente.setNombre(atencionMedicaDto.getPaciente().getNombre());
+                 paciente.setApellidoPaterno(atencionMedicaDto.getPaciente().getApellidoPaterno());
+                 paciente.setApellidoMaterno(atencionMedicaDto.getPaciente().getApellidoMaterno());
+                 paciente.setGenero(atencionMedicaDto.getPaciente().getGenero());
  
-                 // Guardar o actualizar el paciente
+                 //Guardar o actualizar el paciente
                  paciente = pacienteRepository.save(paciente);
  
-                 // Asignar el paciente actualizado a la atención médica y guardarla
+                 //Asignar el paciente actualizado a la atención médica y guardar
                  atencion.setPaciente(paciente);
                  return atencionMedicaRepository.save(atencion);
                 }else{

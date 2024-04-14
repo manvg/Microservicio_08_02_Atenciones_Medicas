@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,11 +26,13 @@ public class AtencionMedicaController {
     @Autowired
     private AtencionMedicaService atencionMedicaService;
 
+    //Obtener listado completo de atenciones medicas
     @GetMapping
     public List<AtencionMedicaDto> getAllAtencionesMedicas(){
         return atencionMedicaService.getAllAtencionesMedicas();
     }
 
+    //Obtener atención médica por su id
     @GetMapping("/{id}")
     public ResponseEntity<Object> getAtencionMedicaById(@PathVariable Integer id){
         var response = atencionMedicaService.getAtencionMedicaById(id);
@@ -42,6 +43,7 @@ public class AtencionMedicaController {
         return ResponseEntity.ok(response);
     }
 
+    //Obtener todas las atenciones médicas de un paciente por su rut
     @GetMapping("paciente/{rut}")
     public ResponseEntity<Object> getAtencionesMedicasByRut(@PathVariable String rut){
         var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
@@ -52,6 +54,7 @@ public class AtencionMedicaController {
         return ResponseEntity.ok(response);
     }
 
+    //Crear atención médica
     @PostMapping
     public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedicaDto atencionMedica){
         var response = atencionMedicaService.createAtencionMedica(atencionMedica);
@@ -61,6 +64,7 @@ public class AtencionMedicaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //Actualizar atención médica
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedicaDto atencionMedica){
         var response = atencionMedicaService.updateAtencionMedica(id, atencionMedica);
@@ -70,6 +74,7 @@ public class AtencionMedicaController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    //Eliminar atención médica
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAtencionMedica(@PathVariable Integer id){
         if (atencionMedicaService.getAtencionMedicaById(id).isEmpty()) {
