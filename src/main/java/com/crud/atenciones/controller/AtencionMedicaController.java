@@ -33,6 +33,7 @@ public class AtencionMedicaController {
     @Autowired
     private AtencionMedicaService atencionMedicaService;
 
+    //----------MÉTODOS GET----------//
     //Obtener listado completo de atenciones medicas
     @GetMapping
     public List<AtencionMedicaDto> getAllAtencionesMedicas(){
@@ -87,6 +88,7 @@ public class AtencionMedicaController {
         return ResponseEntity.ok(response);
     }
 
+    //----------MÉTODOS POST----------//
     //Crear atención médica
     @PostMapping
     public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedicaDto atencionMedica){
@@ -100,6 +102,7 @@ public class AtencionMedicaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //----------MÉTODOS PUT----------//
     //Actualizar atención médica
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedicaDto atencionMedica){
@@ -114,6 +117,7 @@ public class AtencionMedicaController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    //----------MÉTODOS DELETE----------//
     //Eliminar atención médica
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAtencionMedica(@PathVariable Integer id){

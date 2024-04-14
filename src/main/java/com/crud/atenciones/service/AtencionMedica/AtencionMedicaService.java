@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.dto.AtencionMedicaDto;
-import com.crud.atenciones.model.entities.AtencionMedica;
 
 public interface AtencionMedicaService {
     List<AtencionMedicaDto> getAllAtencionesMedicas();

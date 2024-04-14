@@ -1,6 +1,7 @@
 package com.crud.atenciones.advice;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-//Capturar errores
+//----------MANEJO DE EXCEPCIONES----------//
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     //Metodo que retorna errores de ingresos de datos
@@ -25,7 +26,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleInternalServerError(Exception ex) {
-        System.out.println("Error interno del servidor: " + ex.getMessage());
+    public ResponseEntity<String> handleInternalServerError(Exception ex) {
+        String errorMessage = "Error interno del servidor: " + ex.getMessage();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
     }
 }

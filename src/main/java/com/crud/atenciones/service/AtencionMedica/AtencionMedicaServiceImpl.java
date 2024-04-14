@@ -28,6 +28,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     private PacienteRepository pacienteRepository;
     @Autowired
     private AtencionMedicaMapper atencionMedicaMapper;
+    //----------GET----------//
     @Override
     public List<AtencionMedicaDto> getAllAtencionesMedicas(){
         List<AtencionMedica> atencionesMedicas = atencionMedicaRepository.findAll();
@@ -56,6 +57,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
         return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
     }
 
+    //----------POST----------//
     @Override
     public ResponseModel createAtencionMedica(AtencionMedicaDto atencionMedicaDto){
         var pacienteExistente = pacienteRepository.findByRut(atencionMedicaDto.getPaciente().getRut());
@@ -99,6 +101,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
         }
     }
 
+     //----------PUT----------//
     @Override
     @Transactional
     public ResponseModel updateAtencionMedica(Integer id, AtencionMedicaDto atencionMedicaDto){
@@ -139,16 +142,12 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
         return new ResponseModel(false, "La atención médica con id " + id + " no existe");
     }
 
+     //----------DELETE----------//
     @Override
     public void deleteAtencionMedica(Integer id){
         if (atencionMedicaRepository.existsById(id)) {
             atencionMedicaRepository.deleteById(id);
         }
-    }
-
-    private Date getDateNow(){
-        LocalDate localDate = LocalDate.now();
-        return Date.valueOf(localDate);
     }
 }
 

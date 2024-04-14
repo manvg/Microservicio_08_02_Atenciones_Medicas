@@ -29,6 +29,7 @@ public class PacienteController {
 
     private static final Logger log = LoggerFactory.getLogger(AtencionMedicaController.class);
 
+    //----------MÉTODOS GET----------//
     //Obtener listado completo de pacientes
     @GetMapping
     public List<PacienteDto> getAllPacientes(){
@@ -41,7 +42,7 @@ public class PacienteController {
     @GetMapping("/{rut}")
     public ResponseEntity<Object> getPacienteByRut(@PathVariable String rut){
         log.info("GET /pacientes -> getPacienteByRut");
-        log.info("Obteniendo paciente por su rut");
+        log.info("Obteniendo paciente por su rut " + rut);
         if (!validarRut(rut)) {
             log.error("Rut no válido");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"Rut no válido."));
@@ -55,6 +56,7 @@ public class PacienteController {
         return ResponseEntity.ok(response);
     }
 
+    //----------MÉTODOS POST----------//
     //Crear paciente
     @PostMapping
     public ResponseEntity<Object> createPaciente(@RequestBody @Valid PacienteDto Paciente){
@@ -68,10 +70,11 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //----------MÉTODOS PUT----------//
     //Actualizar paciente
     @PutMapping("/{id}")
     public ResponseEntity<Object> updatePaciente(@PathVariable Integer id, @RequestBody @Valid PacienteDto Paciente){
-        log.info("POST /pacientes -> updatePaciente");
+        log.info("POST /pacientes -> updatePaciente id " + id);
         var response = pacienteService.updatePaciente(id, Paciente);
         if (!response.getStatus()) {
             log.error(response.getMessage());
@@ -80,6 +83,7 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    //----------OTROS MÉTODOS----------//
     private boolean validarRut(String rut) {
         return rut != null && rut.matches("\\d{7,8}-[\\dkK]");
     }
