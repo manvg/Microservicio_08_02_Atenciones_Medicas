@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.crud.atenciones.model.AtencionMedicaDto;
+import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.repository.AtencionMedicaRepository;
@@ -52,12 +52,15 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     }
 
     @Override
-    public AtencionMedica createAtencionMedica(AtencionMedica atencionMedica){
-        var pacienteExistente = pacienteRepository.findByRut(atencionMedica.getPaciente().getRut());
+    public AtencionMedica createAtencionMedica(AtencionMedicaDto atencionMedicaDto){
+        var pacienteExistente = pacienteRepository.findByRut(atencionMedicaDto.getPaciente().getRut());
         if (pacienteExistente.isEmpty()) {
+            AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
             //Si el paciente no existe guarda Atencion Medica y Paciente nuevos
             return atencionMedicaRepository.save(atencionMedica);
         }else{
+            AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
+
             AtencionMedica nuevaAtencionMedica = new AtencionMedica();
             nuevaAtencionMedica.setDiagnostico(atencionMedica.getDiagnostico());
             nuevaAtencionMedica.setEspecialidad(atencionMedica.getEspecialidad());
@@ -89,7 +92,7 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
 
     @Override
     @Transactional
-    public AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica){
+    public AtencionMedica updateAtencionMedica(Integer id, AtencionMedicaDto atencionMedica){
         if (atencionMedicaRepository.existsById(id)) {
              // Obtener la atención médica existente    por ID
              var atencionExiste = atencionMedicaRepository.findById(id);

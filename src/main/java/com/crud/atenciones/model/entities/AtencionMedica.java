@@ -10,8 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "atencion_medica")
@@ -19,27 +17,18 @@ public class AtencionMedica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_atencion_medica")
-    @NotNull
     private int idAtencionMedica;
 
     @Column(name = "especialidad")
-    @NotNull
-    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 100 caracteres")
     private String especialidad;
 
     @Column(name = "nombre_medico")
-    @NotNull
-    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 150 caracteres")
     private String nombreMedico;
 
     @Column(name = "diagnostico")
-    @NotNull
-    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
     private String diagnostico;
 
     @Column(name = "tratamiento")
-    @NotNull
-    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
     private String tratamiento;
 
     @ManyToOne(targetEntity = Paciente.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

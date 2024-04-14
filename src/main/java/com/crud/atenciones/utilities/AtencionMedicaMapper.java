@@ -2,7 +2,7 @@ package com.crud.atenciones.utilities;
 
 import org.springframework.stereotype.Component;
 
-import com.crud.atenciones.model.AtencionMedicaDto;
+import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import org.modelmapper.ModelMapper;
 
@@ -16,5 +16,9 @@ public class AtencionMedicaMapper {
 
     public AtencionMedicaDto convertirADTO(AtencionMedica atencionMedica) {
         return modelMapper.map(atencionMedica, AtencionMedicaDto.class);
+    }
+
+    public AtencionMedica convertirAEntity(AtencionMedicaDto atencionMedicaDto){
+        return modelMapper.map(atencionMedicaDto, AtencionMedica.class);
     }
 }

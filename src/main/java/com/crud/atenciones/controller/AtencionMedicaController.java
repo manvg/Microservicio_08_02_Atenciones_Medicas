@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crud.atenciones.model.AtencionMedicaDto;
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.model.entities.AtencionMedica;
+import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/atenciones")
@@ -52,7 +53,7 @@ public class AtencionMedicaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createAtencionMedica(@RequestBody @Validated AtencionMedica atencionMedica){
+    public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedicaDto atencionMedica){
         var response = atencionMedicaService.createAtencionMedica(atencionMedica);
         if (response == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -61,7 +62,7 @@ public class AtencionMedicaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody AtencionMedica atencionMedica){
+    public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedicaDto atencionMedica){
         var response = atencionMedicaService.updateAtencionMedica(id, atencionMedica);
         if (response == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
