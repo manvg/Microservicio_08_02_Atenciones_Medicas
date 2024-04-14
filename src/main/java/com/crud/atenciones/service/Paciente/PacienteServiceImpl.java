@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.repository.PacienteRepository;
@@ -36,19 +37,25 @@ public class PacienteServiceImpl implements PacienteService{
     }
 
     @Override
-    public Paciente createPaciente(PacienteDto pacienteDto){
+    public ResponseModel createPaciente(PacienteDto pacienteDto){
         Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
-        return pacienteRepository.save(paciente);
+        var existeRut = pacienteRepository.findByRut(paciente.getRut());
+        if (!existeRut.isEmpty()) {
+            return new ResponseModel(false, "Ya existe un paciente con el rut " + existeRut.get().getRut());
+        }
+        var resultado =  pacienteRepository.save(paciente);
+        return new ResponseModel(true, "Paciente creado con éxito. Id: " + resultado.getIdPaciente());
     }
 
     @Override
-    public Paciente updatePaciente(Integer id, PacienteDto pacienteDto){
+    public ResponseModel updatePaciente(Integer id, PacienteDto pacienteDto){
         Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
         if (pacienteRepository.existsById(id)) {
             paciente.setIdPaciente(id);
-            return pacienteRepository.save(paciente);
+            var resultado = pacienteRepository.save(paciente);
+            return new ResponseModel(true, "Paciente actualizado con éxito. Id: " + resultado.getIdPaciente());
         }else{
-            return null;
+            return new ResponseModel(false, "El paciente ingresado no existe. No se encontró el id " + id);
         }
     }
 
