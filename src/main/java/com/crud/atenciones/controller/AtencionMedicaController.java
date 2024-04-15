@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
+import com.crud.atenciones.service.Paciente.PacienteService;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class AtencionMedicaController {
 
     @Autowired
     private AtencionMedicaService atencionMedicaService;
+
+    @Autowired 
+    private PacienteService pacienteService;
 
     //----------MÉTODOS GET----------//
     //Obtener listado completo de atenciones medicas
@@ -60,12 +64,15 @@ public class AtencionMedicaController {
     @GetMapping("paciente/{rut}")
     public ResponseEntity<Object> getAtencionesMedicasByRut(@PathVariable String rut){
         log.info("GET /atenciones/paciente/" + rut + " -> getAtencionesMedicasByRut");
-        log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
-        var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
-        if (response.isEmpty()) {
+
+        log.info("Validando existencia de rut " + rut);
+        var existeRut = pacienteService.getPacienteByRut(rut);
+        if (existeRut.isEmpty()) {
             log.error("El paciente con rut " + rut + " no existe");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"El rut ingresado no existe."));
         }
+        log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
+        var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
         log.info("Se encontraron " + response.size() + " atenciones medicas para el paciente con rut " + rut);
         return ResponseEntity.ok(response);
     }
