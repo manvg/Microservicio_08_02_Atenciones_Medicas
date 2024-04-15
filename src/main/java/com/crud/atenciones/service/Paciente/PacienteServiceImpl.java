@@ -20,6 +20,7 @@ public class PacienteServiceImpl implements PacienteService{
     @Autowired
     private PacienteMapper pacienteMapper;
 
+    //---------GET---------//
     @Override
     public List<PacienteDto> getAllPacientes(){
         List<Paciente> pacientes = pacienteRepository.findAll();
@@ -36,6 +37,7 @@ public class PacienteServiceImpl implements PacienteService{
         return pacienteRepository.findByRut(rut);
     }
 
+    //---------CREATE---------//
     @Override
     public ResponseModel createPaciente(PacienteDto pacienteDto){
         Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
@@ -47,6 +49,7 @@ public class PacienteServiceImpl implements PacienteService{
         return new ResponseModel(true, "Paciente creado con éxito. Id: " + resultado.getIdPaciente());
     }
 
+    //---------UPDATE---------//
     @Override
     public ResponseModel updatePaciente(Integer id, PacienteDto pacienteDto){
         Paciente paciente = pacienteMapper.convertirAEntity(pacienteDto);
@@ -56,6 +59,17 @@ public class PacienteServiceImpl implements PacienteService{
             return new ResponseModel(true, "Paciente actualizado con éxito. Id: " + resultado.getIdPaciente());
         }else{
             return new ResponseModel(false, "El paciente ingresado no existe. No se encontró el id " + id);
+        }
+    }
+
+    //---------DELETE---------//
+    @Override
+    public ResponseModel deletePaciente(Integer id){
+        if (pacienteRepository.existsById(id)) {
+            pacienteRepository.deleteById(id);
+            return new ResponseModel(true, "Paciente eliminado con éxito");
+        }else{
+            return new ResponseModel(false, "El paciente ingresado no existe");
         }
     }
 

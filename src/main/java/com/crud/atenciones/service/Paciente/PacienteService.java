@@ -13,4 +13,6 @@ public interface PacienteService {
     Optional<Paciente> getPacienteByRut(String rut);
     ResponseModel createPaciente(PacienteDto atencionMedica);
     ResponseModel updatePaciente(Integer id, PacienteDto paciente);
+    ResponseModel deletePaciente(Integer id);
+
 }

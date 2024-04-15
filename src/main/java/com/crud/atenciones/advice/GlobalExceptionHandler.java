@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.crud.atenciones.model.ResponseModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<String> handleInternalServerError(Exception ex) {
+    public ResponseEntity<ResponseModel> handleInternalServerError(Exception ex) {
         String errorMessage = "Error interno del servidor: " + ex.getMessage();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel(false, errorMessage));
     }
 }
