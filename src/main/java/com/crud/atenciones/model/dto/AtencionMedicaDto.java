@@ -17,19 +17,19 @@ public class AtencionMedicaDto {
     private Integer idAtencionMedica;
 
     @NotNull
-    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 100 caracteres")
+    @Size(min = 5, max = 150, message = "Debe tener entre 5 y 100 caracteres")
     private String especialidad;
 
     @NotNull
-    @Size(min = 10, max = 150, message = "Debe tener entre 10 y 150 caracteres")
+    @Size(min = 5, max = 150, message = "Debe tener entre 5 y 150 caracteres")
     private String nombreMedico;
 
     @NotNull
-    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
+    @Size(min = 5, max = 250, message = "Debe tener entre 5 y 250 caracteres")
     private String diagnostico;
 
     @NotNull
-    @Size(min = 10, max = 250, message = "Debe tener entre 10 y 250 caracteres")
+    @Size(min = 5, max = 250, message = "Debe tener entre 5 y 250 caracteres")
     private String tratamiento;
 
     private String fechaAtencion;
