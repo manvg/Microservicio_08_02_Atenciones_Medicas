@@ -28,7 +28,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ResponseModel> handleInternalServerError(Exception ex) {
-        String errorMessage = "Error interno del servidor: " + ex.getMessage();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel(false, errorMessage));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseModel(false, ex.getMessage()));
+    }
+    
+    @ExceptionHandler(GeneralNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ResponseModel> handleUsuarioNotFoundException(GeneralNotFoundException ex) {
+        String errorMessage = "Usuario no encontrado: " + ex.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(false, errorMessage));
+    }
+
+    @ExceptionHandler(GeneralUnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ResponseModel> handleUnauthorizedException(GeneralUnauthorizedException ex) {
+        String errorMessage = "Acceso no autorizado: " + ex.getMessage();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseModel(false, errorMessage));
     }
 }

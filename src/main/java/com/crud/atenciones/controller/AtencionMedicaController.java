@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.model.dto.AtencionMedicaDto;
+import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
 import com.crud.atenciones.service.Paciente.PacienteService;
 
@@ -40,10 +40,11 @@ public class AtencionMedicaController {
     //----------MÉTODOS GET----------//
     //Obtener listado completo de atenciones medicas
     @GetMapping
-    public List<AtencionMedicaDto> getAllAtencionesMedicas(){
+    public List<AtencionMedica> getAllAtencionesMedicas(){
         log.info("GET /atenciones -> getAllAtencionesMedicas");
         log.info("Retornando lista de atenciones medicas");
-        return atencionMedicaService.getAllAtencionesMedicas();
+        var lista = atencionMedicaService.getAllAtencionesMedicas();
+        return lista;
     }
 
     //Obtener atención médica por su id
@@ -85,7 +86,7 @@ public class AtencionMedicaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false, "La fecha de inicio no puede ser mayor que fecha de fin."));
         }
 
-        List<AtencionMedicaDto> response = atencionMedicaService.getAtencionesMedicasByRangoFecha(fechaInicio, fechaFin);
+        List<AtencionMedica> response = atencionMedicaService.getAtencionesMedicasByRangoFecha(fechaInicio, fechaFin);
 
         if (response.isEmpty()) {
             log.error("No se encontraron atenciones medicas en el rango de fechas : " + fechaInicio + " y fecha fin " + fechaFin);
@@ -98,7 +99,7 @@ public class AtencionMedicaController {
     //----------MÉTODOS POST----------//
     //Crear atención médica
     @PostMapping
-    public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedicaDto atencionMedica){
+    public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
         log.info("POST /atenciones/createAtencionMedica -> createAtencionMedica");
         log.info("Creando atencion medica...");
         var response = atencionMedicaService.createAtencionMedica(atencionMedica);
@@ -112,7 +113,7 @@ public class AtencionMedicaController {
     //----------MÉTODOS PUT----------//
     //Actualizar atención médica
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedicaDto atencionMedica){
+    public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedica atencionMedica){
         log.info("PUT /atenciones/"+id + " -> updateAtencionMedica");
         log.info("Actualizando atencion medica");
         var response = atencionMedicaService.updateAtencionMedica(id, atencionMedica);

@@ -3,13 +3,11 @@ package com.crud.atenciones.service.AtencionMedica;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.model.dto.AtencionMedicaDto;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.repository.AtencionMedicaRepository;
@@ -17,78 +15,66 @@ import com.crud.atenciones.repository.PacienteRepository;
 
 import jakarta.transaction.Transactional;
 
-import com.crud.atenciones.utilities.*;
-
 @Service
 public class AtencionMedicaServiceImpl implements AtencionMedicaService{
     @Autowired
     private AtencionMedicaRepository atencionMedicaRepository;
     @Autowired
     private PacienteRepository pacienteRepository;
-    @Autowired
-    private AtencionMedicaMapper atencionMedicaMapper;
     //----------GET----------//
     @Override
-    public List<AtencionMedicaDto> getAllAtencionesMedicas(){
-        List<AtencionMedica> atencionesMedicas = atencionMedicaRepository.findAll();
-        return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
+    public List<AtencionMedica> getAllAtencionesMedicas(){
+        return atencionMedicaRepository.findAll();
     }
 
     @Override
-    public Optional<AtencionMedicaDto> getAtencionMedicaById(Integer id){
-        var atencionMedica = atencionMedicaRepository.findById(id);
-        return atencionMedica.stream().map(atencionMedicaMapper::convertirADTO).findFirst();
+    public Optional<AtencionMedica> getAtencionMedicaById(Integer id){
+        return atencionMedicaRepository.findById(id);
     }
 
     @Override
-    public List<AtencionMedicaDto> getAtencionesMedicasByRangoFecha(LocalDate fechaInicio, LocalDate fechaFin){
-        List<AtencionMedica> atencionesMedicas = atencionMedicaRepository.findByFechaAtencionBetween(fechaInicio, fechaFin);
-        return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
+    public List<AtencionMedica> getAtencionesMedicasByRangoFecha(LocalDate fechaInicio, LocalDate fechaFin){
+        return atencionMedicaRepository.findByFechaAtencionBetween(fechaInicio, fechaFin);
     }
 
     @Override
-    public List<AtencionMedicaDto> getAtencionesMedicasByRut(String rutPaciente){
+    public List<AtencionMedica> getAtencionesMedicasByRut(String rutPaciente){
         var paciente = pacienteRepository.findByRut(rutPaciente);
         if (paciente.isEmpty()) {
             return null;
         }
-        var atencionesMedicas = atencionMedicaRepository.findByPaciente(paciente.get());
-        return atencionesMedicas.stream().map(atencionMedicaMapper::convertirADTO).collect(Collectors.toList());
+        return atencionMedicaRepository.findByPaciente(paciente.get());
     }
 
     //----------POST----------//
     @Override
-    public ResponseModel createAtencionMedica(AtencionMedicaDto atencionMedicaDto){
-        var pacienteExistente = pacienteRepository.findByRut(atencionMedicaDto.getPaciente().getRut());
+    public ResponseModel createAtencionMedica(AtencionMedica atencionMedicaCreate){
+        var pacienteExistente = pacienteRepository.findByRut(atencionMedicaCreate.getPaciente().getRut());
         if (pacienteExistente.isEmpty()) {
-            //Mapea DTO a entidad Atencion Medica
-            AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
-            atencionMedica.setFechaAtencion(LocalDate.now());
+            atencionMedicaCreate.setFechaAtencion(LocalDate.now());
             // Si el paciente no existe guarda Atencion Médica y Paciente nuevos
-            var resultado = atencionMedicaRepository.save(atencionMedica);
+            var resultado = atencionMedicaRepository.save(atencionMedicaCreate);
             return new ResponseModel(true, "Atención médica creada con éxito. Id: " + resultado.getIdAtencionMedica());
         }else{
-            //Mapea DTO a entidad Atencion Medica
-            AtencionMedica atencionMedica = atencionMedicaMapper.convertirAEntity(atencionMedicaDto);
             AtencionMedica nuevaAtencionMedica = new AtencionMedica();
-            nuevaAtencionMedica.setDiagnostico(atencionMedica.getDiagnostico());
-            nuevaAtencionMedica.setEspecialidad(atencionMedica.getEspecialidad());
-            nuevaAtencionMedica.setMedicoAtencion(atencionMedica.getNombreMedico());
-            nuevaAtencionMedica.setTratamiento(atencionMedica.getTratamiento());
+            nuevaAtencionMedica.setDiagnostico(atencionMedicaCreate.getDiagnostico());
+            nuevaAtencionMedica.setEspecialidad(atencionMedicaCreate.getEspecialidad());
+            nuevaAtencionMedica.setMedicoAtencion(atencionMedicaCreate.getNombreMedico());
+            nuevaAtencionMedica.setTratamiento(atencionMedicaCreate.getTratamiento());
             
             //Obtener el paciente de la atención médica
-            Paciente paciente = atencionMedica.getPaciente();
+            Paciente paciente = atencionMedicaCreate.getPaciente();
             if (paciente == null) {
                 paciente = new Paciente();
             }
 
             //Actualizar los campos del paciente
             paciente.setIdPaciente(pacienteExistente.get().getIdPaciente());
-            paciente.setRut(atencionMedica.getPaciente().getRut());
-            paciente.setNombre(atencionMedica.getPaciente().getNombre());
-            paciente.setApellidoPaterno(atencionMedica.getPaciente().getApellidoPaterno());
-            paciente.setApellidoMaterno(atencionMedica.getPaciente().getApellidoMaterno());
-            paciente.setGenero(atencionMedica.getPaciente().getGenero());
+            paciente.setRut(atencionMedicaCreate.getPaciente().getRut());
+            paciente.setNombre(atencionMedicaCreate.getPaciente().getNombre());
+            paciente.setApellidoPaterno(atencionMedicaCreate.getPaciente().getApellidoPaterno());
+            paciente.setApellidoMaterno(atencionMedicaCreate.getPaciente().getApellidoMaterno());
+            paciente.setGenero(atencionMedicaCreate.getPaciente().getGenero());
 
             //Guardar o actualizar el paciente
             paciente = pacienteRepository.save(paciente);
@@ -103,17 +89,17 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
      //----------PUT----------//
     @Override
     @Transactional
-    public ResponseModel updateAtencionMedica(Integer id, AtencionMedicaDto atencionMedicaDto){
+    public ResponseModel updateAtencionMedica(Integer id, AtencionMedica atencionMedicaUpdate){
         if (atencionMedicaRepository.existsById(id)) {
              //Obtener la atención médica existente por ID
              var atencionExiste = atencionMedicaRepository.findById(id);
              if (!atencionExiste.isEmpty()) {
                 AtencionMedica atencion = atencionExiste.get();
                  //Actualizar los campos de la atención médica
-                 atencion.setDiagnostico(atencionMedicaDto.getDiagnostico());
-                 atencion.setEspecialidad(atencionMedicaDto.getEspecialidad());
-                 atencion.setMedicoAtencion(atencionMedicaDto.getNombreMedico());
-                 atencion.setTratamiento(atencionMedicaDto.getTratamiento());
+                 atencion.setDiagnostico(atencionMedicaUpdate.getDiagnostico());
+                 atencion.setEspecialidad(atencionMedicaUpdate.getEspecialidad());
+                 atencion.setMedicoAtencion(atencionMedicaUpdate.getNombreMedico());
+                 atencion.setTratamiento(atencionMedicaUpdate.getTratamiento());
  
                  // Obtener el paciente de la atención médica
                  Paciente paciente = atencion.getPaciente();
@@ -122,11 +108,11 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
                  }
  
                  // Actualizar los campos del paciente
-                 paciente.setRut(atencionMedicaDto.getPaciente().getRut());
-                 paciente.setNombre(atencionMedicaDto.getPaciente().getNombre());
-                 paciente.setApellidoPaterno(atencionMedicaDto.getPaciente().getApellidoPaterno());
-                 paciente.setApellidoMaterno(atencionMedicaDto.getPaciente().getApellidoMaterno());
-                 paciente.setGenero(atencionMedicaDto.getPaciente().getGenero());
+                 paciente.setRut(atencionMedicaUpdate.getPaciente().getRut());
+                 paciente.setNombre(atencionMedicaUpdate.getPaciente().getNombre());
+                 paciente.setApellidoPaterno(atencionMedicaUpdate.getPaciente().getApellidoPaterno());
+                 paciente.setApellidoMaterno(atencionMedicaUpdate.getPaciente().getApellidoMaterno());
+                 paciente.setGenero(atencionMedicaUpdate.getPaciente().getGenero());
  
                  //Guardar o actualizar el paciente
                  paciente = pacienteRepository.save(paciente);
