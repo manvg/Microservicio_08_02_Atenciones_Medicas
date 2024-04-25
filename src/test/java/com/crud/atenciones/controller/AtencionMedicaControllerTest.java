@@ -24,7 +24,7 @@ public class AtencionMedicaControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AtencionMedicaService atencionMedocaServiceMock;
+    private AtencionMedicaService atencionMedicaServiceMock;
 
     private AtencionMedica atencionMedica1;
     private AtencionMedica atencionMedica2;
@@ -75,7 +75,7 @@ public class AtencionMedicaControllerTest {
     public void getAllAtencionesMedicasTest() throws Exception{
 
         List<AtencionMedica> atenciones = List.of(atencionMedica1, atencionMedica2);
-        when(atencionMedocaServiceMock.getAllAtencionesMedicas()).thenReturn(atenciones);
+        when(atencionMedicaServiceMock.getAllAtencionesMedicas()).thenReturn(atenciones);
 
         mockMvc.perform(get("/atenciones"))
                 .andExpect(status().isOk())
@@ -108,4 +108,5 @@ public class AtencionMedicaControllerTest {
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1]._links.self.href").value("http://localhost/atenciones/2"))
                 ;
     }
+    
 }
