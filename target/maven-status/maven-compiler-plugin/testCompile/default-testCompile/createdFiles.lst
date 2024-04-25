@@ -1,0 +1,4 @@
+com\crud\atenciones\repository\AtencionMedicaRepositoryTest.class
+com\crud\atenciones\AtencionesApplicationTests.class
+com\crud\atenciones\service\AtencionMedicaServiceTest.class
+com\crud\atenciones\controller\AtencionMedicaControllerTest.class
