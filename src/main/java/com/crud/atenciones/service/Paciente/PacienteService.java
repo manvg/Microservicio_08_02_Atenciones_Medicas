@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.model.entities.Paciente;
 
 public interface PacienteService {
-    List<PacienteDto> getAllPacientes();
+    List<Paciente> getAllPacientes();
     Optional<Paciente> getPacienteById(Integer id);
     Optional<Paciente> getPacienteByRut(String rut);
-    ResponseModel createPaciente(PacienteDto atencionMedica);
-    ResponseModel updatePaciente(Integer id, PacienteDto paciente);
+    ResponseModel createPaciente(Paciente atencionMedica);
+    ResponseModel updatePaciente(Integer id, Paciente paciente);
     ResponseModel deletePaciente(Integer id);
 
 }

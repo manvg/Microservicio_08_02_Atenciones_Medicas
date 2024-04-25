@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GeneralNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ResponseModel> handleUsuarioNotFoundException(GeneralNotFoundException ex) {
-        String errorMessage = "Usuario no encontrado: " + ex.getMessage();
+        String errorMessage = "No encontrado: " + ex.getMessage();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(false, errorMessage));
     }
 

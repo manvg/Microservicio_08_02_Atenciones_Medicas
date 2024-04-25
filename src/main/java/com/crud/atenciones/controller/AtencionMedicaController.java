@@ -2,9 +2,13 @@ package com.crud.atenciones.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.crud.atenciones.advice.BusinessException;
+import com.crud.atenciones.advice.GeneralNotFoundException;
 import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
@@ -40,43 +46,66 @@ public class AtencionMedicaController {
     //----------MÉTODOS GET----------//
     //Obtener listado completo de atenciones medicas
     @GetMapping
-    public List<AtencionMedica> getAllAtencionesMedicas(){
+    public CollectionModel<EntityModel<AtencionMedica>> getAllAtencionesMedicas() {
         log.info("GET /atenciones -> getAllAtencionesMedicas");
         log.info("Retornando lista de atenciones medicas");
-        var lista = atencionMedicaService.getAllAtencionesMedicas();
-        return lista;
+        var atencionesMedicas = atencionMedicaService.getAllAtencionesMedicas();
+        List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
+            .map( atencion -> EntityModel.of(atencion,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
+            ))
+            .collect(Collectors.toList());
+
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllAtencionesMedicas());
+        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas"));
+
+        return resources;
     }
 
     //Obtener atención médica por su id
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getAtencionMedicaById(@PathVariable Integer id){
+    public EntityModel<AtencionMedica> getAtencionMedicaById(@PathVariable Integer id){
         log.info("GET /atenciones/" + id + " -> getAtencionMedicaById");
         log.info("Obteniendo atencion medica por id " + id);
-        var response = atencionMedicaService.getAtencionMedicaById(id);
-        if (response.isEmpty()) {
+        var atencionMedica = atencionMedicaService.getAtencionMedicaById(id);
+
+        if (!atencionMedica.isEmpty()) {
+            log.info("Atencion medica encontrada con exito. Id: " + id);
+            return EntityModel.of(atencionMedica.get(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(id)).withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllAtencionesMedicas()).withRel("all-atenciones-medicas"));
+        } else {
             log.error("No se encontro atencion medica con id " + id);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"La atención médica no existe."));
+            throw new GeneralNotFoundException("Atención Médica Id: " + String.valueOf(id));
         }
-        log.info("Atencion medica encontrada con exito. Id: " + id);
-        return ResponseEntity.ok(response);
     }
 
     //Obtener todas las atenciones médicas de un paciente por su rut
     @GetMapping("paciente/{rut}")
-    public ResponseEntity<Object> getAtencionesMedicasByRut(@PathVariable String rut){
+    public CollectionModel<EntityModel<AtencionMedica>> getAtencionesMedicasByRut(@PathVariable String rut){
         log.info("GET /atenciones/paciente/" + rut + " -> getAtencionesMedicasByRut");
 
         log.info("Validando existencia de rut " + rut);
         var existeRut = pacienteService.getPacienteByRut(rut);
         if (existeRut.isEmpty()) {
             log.error("El paciente con rut " + rut + " no existe");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false,"El rut ingresado no existe."));
+            throw new BusinessException("RUT_NO_EXISTE", rut);
         }
+
         log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
-        var response = atencionMedicaService.getAtencionesMedicasByRut(rut);
-        log.info("Se encontraron " + response.size() + " atenciones medicas para el paciente con rut " + rut);
-        return ResponseEntity.ok(response);
+        var atencionesMedicas = atencionMedicaService.getAtencionesMedicasByRut(rut);
+        List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
+            .map( atencion -> EntityModel.of(atencion,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
+            ))
+            .collect(Collectors.toList());
+
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllAtencionesMedicas());
+        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas"));
+        log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas para el paciente con rut " + rut);
+        return resources;
     }
+
 
     @GetMapping("/by-rango-fecha")
     public ResponseEntity<Object> getAtencionMedicaByRangoFecha(@RequestParam(value = "fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio, @RequestParam(value = "fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {

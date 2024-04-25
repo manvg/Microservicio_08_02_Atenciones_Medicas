@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.model.ResponseModel;
-import com.crud.atenciones.model.dto.PacienteDto;
 import com.crud.atenciones.service.Paciente.PacienteService;
+import com.crud.atenciones.model.entities.Paciente;
 
 import jakarta.validation.Valid;
 
@@ -33,7 +33,7 @@ public class PacienteController {
     //----------MÉTODOS GET----------//
     //Obtener listado completo de pacientes
     @GetMapping
-    public List<PacienteDto> getAllPacientes(){
+    public List<Paciente> getAllPacientes(){
         log.info("GET /pacientes -> getAllPacientes");
         log.info("Retornando lista de pacientes");
         return pacienteService.getAllPacientes();
@@ -60,7 +60,7 @@ public class PacienteController {
     //----------MÉTODOS POST----------//
     //Crear paciente
     @PostMapping
-    public ResponseEntity<Object> createPaciente(@RequestBody @Valid PacienteDto Paciente){
+    public ResponseEntity<Object> createPaciente(@RequestBody @Valid Paciente Paciente){
         log.info("POST /pacientes -> createPaciente");
         var response = pacienteService.createPaciente(Paciente);
         if (!response.getStatus()) {
@@ -74,7 +74,7 @@ public class PacienteController {
     //----------MÉTODOS PUT----------//
     //Actualizar paciente
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updatePaciente(@PathVariable Integer id, @RequestBody @Valid PacienteDto Paciente){
+    public ResponseEntity<Object> updatePaciente(@PathVariable Integer id, @RequestBody @Valid Paciente Paciente){
         log.info("POST /pacientes -> updatePaciente id " + id);
         var response = pacienteService.updatePaciente(id, Paciente);
         if (!response.getStatus()) {
