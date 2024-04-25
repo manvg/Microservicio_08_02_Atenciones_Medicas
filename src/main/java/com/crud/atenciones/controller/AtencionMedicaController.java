@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.atenciones.advice.BusinessException;
 import com.crud.atenciones.advice.GeneralNotFoundException;
-import com.crud.atenciones.model.ResponseModel;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
-import com.crud.atenciones.service.Paciente.PacienteService;
+//import com.crud.atenciones.service.Paciente.PacienteService;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -40,8 +39,8 @@ public class AtencionMedicaController {
     @Autowired
     private AtencionMedicaService atencionMedicaService;
 
-    @Autowired 
-    private PacienteService pacienteService;
+    // @Autowired 
+    // private PacienteService pacienteService;
 
     //----------MÉTODOS GET----------//
     //Obtener listado completo de atenciones medicas
@@ -81,30 +80,30 @@ public class AtencionMedicaController {
     }
 
     //Obtener todas las atenciones médicas de un paciente por su rut
-    @GetMapping("paciente/{rut}")
-    public CollectionModel<EntityModel<AtencionMedica>> getAtencionesMedicasByRut(@PathVariable String rut){
-        log.info("GET /atenciones/paciente/" + rut + " -> getAtencionesMedicasByRut");
+    // @GetMapping("paciente/{rut}")
+    // public CollectionModel<EntityModel<AtencionMedica>> getAtencionesMedicasByRut(@PathVariable String rut){
+    //     log.info("GET /atenciones/paciente/" + rut + " -> getAtencionesMedicasByRut");
 
-        log.info("Validando existencia de rut " + rut);
-        var existeRut = pacienteService.getPacienteByRut(rut);
-        if (existeRut.isEmpty()) {
-            log.error("No existe un paciente con rut " + rut + " no existe");
-            throw new GeneralNotFoundException("No existe un paciente con rut " + rut + " no existe");
-        }
+    //     log.info("Validando existencia de rut " + rut);
+    //     var existeRut = pacienteService.getPacienteByRut(rut);
+    //     if (existeRut.isEmpty()) {
+    //         log.error("No existe un paciente con rut " + rut + " no existe");
+    //         throw new GeneralNotFoundException("No existe un paciente con rut " + rut + " no existe");
+    //     }
 
-        log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
-        var atencionesMedicas = atencionMedicaService.getAtencionesMedicasByRut(rut);
-        List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
-            .map( atencion -> EntityModel.of(atencion,
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
-            ))
-            .collect(Collectors.toList());
+    //     log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
+    //     var atencionesMedicas = atencionMedicaService.getAtencionesMedicasByRut(rut);
+    //     List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
+    //         .map( atencion -> EntityModel.of(atencion,
+    //             WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
+    //         ))
+    //         .collect(Collectors.toList());
 
-        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionesMedicasByRut(rut));
-        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas-by-rut"));
-        log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas para el paciente con rut " + rut);
-        return resources;
-    }
+    //     WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionesMedicasByRut(rut));
+    //     CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas-by-rut"));
+    //     log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas para el paciente con rut " + rut);
+    //     return resources;
+    // }
 
 
     @GetMapping("/by-rango-fecha")
@@ -131,18 +130,6 @@ public class AtencionMedicaController {
 
     //----------MÉTODOS POST----------//
     //Crear atención médica
-    // @PostMapping
-    // public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
-    //     log.info("POST /atenciones/createAtencionMedica -> createAtencionMedica");
-    //     log.info("Creando atencion medica...");
-    //     var response = atencionMedicaService.createAtencionMedica(atencionMedica);
-    //     if (!response.getStatus()) {
-    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    //     }
-    //     log.info(response.getMessage());
-    //     return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    // }
-
     @PostMapping
     public EntityModel<AtencionMedica> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
         log.info("POST /atenciones/createAtencionMedica -> createAtencionMedica");
