@@ -88,8 +88,8 @@ public class AtencionMedicaController {
         log.info("Validando existencia de rut " + rut);
         var existeRut = pacienteService.getPacienteByRut(rut);
         if (existeRut.isEmpty()) {
-            log.error("El paciente con rut " + rut + " no existe");
-            throw new BusinessException("RUT_NO_EXISTE", rut);
+            log.error("No existe un paciente con rut " + rut + " no existe");
+            throw new BusinessException("RUT_NO_EXISTE", "No existe un paciente con rut " + rut + " no existe");
         }
 
         log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
@@ -100,29 +100,33 @@ public class AtencionMedicaController {
             ))
             .collect(Collectors.toList());
 
-        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllAtencionesMedicas());
-        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas"));
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionesMedicasByRut(rut));
+        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas-by-rut"));
         log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas para el paciente con rut " + rut);
         return resources;
     }
 
 
     @GetMapping("/by-rango-fecha")
-    public ResponseEntity<Object> getAtencionMedicaByRangoFecha(@RequestParam(value = "fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio, @RequestParam(value = "fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {
+    public CollectionModel<EntityModel<AtencionMedica>> getAtencionMedicaByRangoFecha(@RequestParam(value = "fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio, @RequestParam(value = "fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {
         log.info("GET /atenciones/by-rango-fecha -> getAtencionMedicaByRangoFecha");
         log.info("Obteniendo atenciones medicas con rango fecha inicio: " + fechaInicio + " y fecha fin " + fechaFin);
         if (fechaInicio.isAfter(fechaFin)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel(false, "La fecha de inicio no puede ser mayor que fecha de fin."));
+            throw new BusinessException("RANGO_FECHA_INVALIDO", "La fecha de inicio no puede ser mayor que fecha de fin.");
         }
 
-        List<AtencionMedica> response = atencionMedicaService.getAtencionesMedicasByRangoFecha(fechaInicio, fechaFin);
+        List<AtencionMedica> atencionesMedicas = atencionMedicaService.getAtencionesMedicasByRangoFecha(fechaInicio, fechaFin);
+        List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
+            .map( atencion -> EntityModel.of(atencion,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
+            ))
+            .collect(Collectors.toList());
 
-        if (response.isEmpty()) {
-            log.error("No se encontraron atenciones medicas en el rango de fechas : " + fechaInicio + " y fecha fin " + fechaFin);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(false, "No se encontraron atenciones médicas para el rango de fechas especificado."));
-        }
-        log.info("Se encontraron " + response.size() + " atenciones medicas en el rango de fechas : " + fechaInicio + " y fecha fin " + fechaFin);
-        return ResponseEntity.ok(response);
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaByRangoFecha(fechaInicio, fechaFin));
+        CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas-by-rango-fecha"));
+
+        log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas en el rango de fechas : " + fechaInicio + " y fecha fin " + fechaFin);
+        return resources;
     }
 
     //----------MÉTODOS POST----------//
