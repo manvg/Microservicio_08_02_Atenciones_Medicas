@@ -48,13 +48,12 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
 
     //----------POST----------//
     @Override
-    public ResponseModel createAtencionMedica(AtencionMedica atencionMedicaCreate){
+    public AtencionMedica createAtencionMedica(AtencionMedica atencionMedicaCreate){
         var pacienteExistente = pacienteRepository.findByRut(atencionMedicaCreate.getPaciente().getRut());
         if (pacienteExistente.isEmpty()) {
             atencionMedicaCreate.setFechaAtencion(LocalDate.now());
             // Si el paciente no existe guarda Atencion Médica y Paciente nuevos
-            var resultado = atencionMedicaRepository.save(atencionMedicaCreate);
-            return new ResponseModel(true, "Atención médica creada con éxito. Id: " + resultado.getIdAtencionMedica());
+            return atencionMedicaRepository.save(atencionMedicaCreate);
         }else{
             AtencionMedica nuevaAtencionMedica = new AtencionMedica();
             nuevaAtencionMedica.setDiagnostico(atencionMedicaCreate.getDiagnostico());
@@ -81,15 +80,14 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
             
             nuevaAtencionMedica.setPaciente(paciente);
             nuevaAtencionMedica.setFechaAtencion(LocalDate.now());
-            var resultado = atencionMedicaRepository.save(nuevaAtencionMedica);
-            return new ResponseModel(true, "Atención médica creada con éxito. Id: " + resultado.getIdAtencionMedica());
+            return atencionMedicaRepository.save(nuevaAtencionMedica);
         }
     }
 
      //----------PUT----------//
     @Override
     @Transactional
-    public ResponseModel updateAtencionMedica(Integer id, AtencionMedica atencionMedicaUpdate){
+    public AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedicaUpdate){
         if (atencionMedicaRepository.existsById(id)) {
              //Obtener la atención médica existente por ID
              var atencionExiste = atencionMedicaRepository.findById(id);
@@ -119,19 +117,20 @@ public class AtencionMedicaServiceImpl implements AtencionMedicaService{
  
                  //Asignar el paciente actualizado a la atención médica y guardar
                  atencion.setPaciente(paciente);
-                 var resultado = atencionMedicaRepository.save(atencion);
-
-                 return new ResponseModel(true, "Atención médica actualizada con éxito. Id: " + resultado.getIdAtencionMedica());
+                 return atencionMedicaRepository.save(atencion);
                 }
         }
-        return new ResponseModel(false, "La atención médica con id " + id + " no existe");
+        return null;
     }
 
      //----------DELETE----------//
     @Override
-    public void deleteAtencionMedica(Integer id){
+    public ResponseModel deleteAtencionMedica(Integer id){
         if (atencionMedicaRepository.existsById(id)) {
             atencionMedicaRepository.deleteById(id);
+            return new ResponseModel(true, "Atención médica eliminada con éxito");
+        }else{
+            return new ResponseModel(false, "La Atención médica ingresada no existe");
         }
     }
 }

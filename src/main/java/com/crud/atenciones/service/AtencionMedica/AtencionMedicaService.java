@@ -12,7 +12,7 @@ public interface AtencionMedicaService {
     List<AtencionMedica> getAtencionesMedicasByRut(String rut);
     List<AtencionMedica> getAtencionesMedicasByRangoFecha(LocalDate fechaInicio, LocalDate fechaFin);
     Optional<AtencionMedica> getAtencionMedicaById(Integer id);
-    ResponseModel createAtencionMedica(AtencionMedica atencionMedica);
-    ResponseModel updateAtencionMedica(Integer id, AtencionMedica atencionMedica);
-    void deleteAtencionMedica(Integer id);
+    AtencionMedica createAtencionMedica(AtencionMedica atencionMedica);
+    AtencionMedica updateAtencionMedica(Integer id, AtencionMedica atencionMedica);
+    ResponseModel deleteAtencionMedica(Integer id);
 }

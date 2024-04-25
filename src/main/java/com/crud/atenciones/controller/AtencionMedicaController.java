@@ -89,7 +89,7 @@ public class AtencionMedicaController {
         var existeRut = pacienteService.getPacienteByRut(rut);
         if (existeRut.isEmpty()) {
             log.error("No existe un paciente con rut " + rut + " no existe");
-            throw new BusinessException("RUT_NO_EXISTE", "No existe un paciente con rut " + rut + " no existe");
+            throw new GeneralNotFoundException("No existe un paciente con rut " + rut + " no existe");
         }
 
         log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
@@ -131,31 +131,45 @@ public class AtencionMedicaController {
 
     //----------MÉTODOS POST----------//
     //Crear atención médica
+    // @PostMapping
+    // public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
+    //     log.info("POST /atenciones/createAtencionMedica -> createAtencionMedica");
+    //     log.info("Creando atencion medica...");
+    //     var response = atencionMedicaService.createAtencionMedica(atencionMedica);
+    //     if (!response.getStatus()) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    //     }
+    //     log.info(response.getMessage());
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    // }
+
     @PostMapping
-    public ResponseEntity<Object> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
+    public EntityModel<AtencionMedica> createAtencionMedica(@RequestBody @Valid AtencionMedica atencionMedica){
         log.info("POST /atenciones/createAtencionMedica -> createAtencionMedica");
         log.info("Creando atencion medica...");
         var response = atencionMedicaService.createAtencionMedica(atencionMedica);
-        if (!response.getStatus()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        log.info(response.getMessage());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("Atención médica creada con exito. Id: " + response.getIdAtencionMedica());
+        return EntityModel.of(response,
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).createAtencionMedica(response)).withSelfRel(),
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(response.getIdAtencionMedica())).withRel("get-atencion-medica-by-id"));
     }
 
     //----------MÉTODOS PUT----------//
     //Actualizar atención médica
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedica atencionMedica){
-        log.info("PUT /atenciones/"+id + " -> updateAtencionMedica");
+    public EntityModel<AtencionMedica> updateAtencionMedica(@PathVariable Integer id, @RequestBody @Valid AtencionMedica atencionMedica){
+        log.info("PUT /atenciones/"+ id + " -> updateAtencionMedica");
         log.info("Actualizando atencion medica");
+        
         var response = atencionMedicaService.updateAtencionMedica(id, atencionMedica);
-        if (!response.getStatus()) {
-            log.error(response.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        if (response == null) {
+            log.error("No existe una atención médica con id " + id);
+            throw new GeneralNotFoundException("No existe una atención médica con id " + id);
         }
-        log.info("Atención médica actualizada con éxito");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        log.info("Atención médica actualizada con éxito. Id: " + id);
+        return EntityModel.of(response,
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).updateAtencionMedica(id, response)).withSelfRel(),
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(response.getIdAtencionMedica())).withRel("get-atencion-medica-by-id"));
     }
 
     //----------MÉTODOS DELETE----------//
@@ -163,13 +177,13 @@ public class AtencionMedicaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAtencionMedica(@PathVariable Integer id){
         log.info("DELETE /atenciones/" + id + " -> deleteAtencionMedica");
-        if (atencionMedicaService.getAtencionMedicaById(id).isEmpty()) {
-            log.error("La atención médica con id " + id + " no existe");
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(false,"La atención médica ingresada no existe."));
+  
+        var response = atencionMedicaService.deleteAtencionMedica(id);
+        if (!response.getStatus()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        //Eliminar atención medica
-        atencionMedicaService.deleteAtencionMedica(id);
-        log.info("Atención médica eliminada con éxito");
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(true,"Atención médica eliminada con éxito."));
+        log.info(response.getMessage());
+        return ResponseEntity.status(HttpStatus.OK).body(EntityModel.of(response,
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).deleteAtencionMedica(id)).withSelfRel())); 
     }
 }
