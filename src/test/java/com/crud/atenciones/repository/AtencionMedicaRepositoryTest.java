@@ -1,9 +1,13 @@
 package com.crud.atenciones.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +19,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.model.entities.Paciente;
 
+//Pruebas capa de acceso a datos
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)//evita sustitución por una BD embebida. Asegura que la BD sea la misma que la configurada para el entorno de pruebas.
 public class AtencionMedicaRepositoryTest {
     @Autowired
     private AtencionMedicaRepository atencionMedicaRepository;
@@ -46,7 +51,7 @@ public class AtencionMedicaRepositoryTest {
         nuevaAtencionMedica = new AtencionMedica();
         nuevaAtencionMedica.setDiagnostico("Estres laboral");
         nuevaAtencionMedica.setEspecialidad("Medicina General");
-        nuevaAtencionMedica.setFechaAtencion(LocalDate.now());
+        nuevaAtencionMedica.setFechaAtencion(LocalDate.of(2024, 5, 1));
         nuevaAtencionMedica.setMedicoAtencion("Juan Perez");
         nuevaAtencionMedica.setTratamiento("Vacaciones permanentes en el caribe");
         nuevaAtencionMedica.setPaciente(paciente1);
@@ -54,7 +59,7 @@ public class AtencionMedicaRepositoryTest {
         atencionMedica2 = new AtencionMedica();
         atencionMedica2.setDiagnostico("Covid 19");
         atencionMedica2.setEspecialidad("Medicina General");
-        atencionMedica2.setFechaAtencion(LocalDate.now());
+        atencionMedica2.setFechaAtencion(LocalDate.of(2024, 5, 2));
         atencionMedica2.setMedicoAtencion("Fernanda Muñoz");
         atencionMedica2.setPaciente(paciente2);
         atencionMedica2.setTratamiento("Cuarentena por 14 dias");
@@ -68,4 +73,24 @@ public class AtencionMedicaRepositoryTest {
         assertNotNull(resultado.getIdAtencionMedica());
         assertEquals("Estres laboral", resultado.getDiagnostico());
     }
+
+    @Test
+    @DisplayName("Buscar atenciones médicas por rango de fechas => Respuesta correcta")
+    public void buscarAtencionesPorRangoDeFechasTest() {
+        atencionMedicaRepository.save(nuevaAtencionMedica);
+        atencionMedicaRepository.save(atencionMedica2);
+
+        LocalDate fechaInicio = LocalDate.of(2024, 5, 1);
+        LocalDate fechaFin = LocalDate.of(2024, 5, 2);
+
+        List<AtencionMedica> atencionesPorFechas = atencionMedicaRepository.findByFechaAtencionBetween(fechaInicio, fechaFin);
+
+        assertFalse(atencionesPorFechas.isEmpty());
+
+        assertTrue(atencionesPorFechas.stream().anyMatch(a -> {
+            LocalDate fechaAtencion = a.getFechaAtencion();
+            return fechaAtencion.isAfter(fechaInicio) && fechaAtencion.isBefore(fechaFin) || fechaAtencion.isEqual(fechaInicio) || fechaAtencion.isEqual(fechaFin);
+        }));
+    }
+
 }
