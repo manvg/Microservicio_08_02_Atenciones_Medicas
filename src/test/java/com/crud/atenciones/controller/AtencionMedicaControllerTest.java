@@ -18,8 +18,9 @@ import com.crud.atenciones.model.entities.AtencionMedica;
 import com.crud.atenciones.model.entities.Paciente;
 import com.crud.atenciones.service.AtencionMedica.AtencionMedicaService;
 
-@WebMvcTest(AtencionMedicaController.class)
+@WebMvcTest(AtencionMedicaController.class)//Referencia al controlador principal
 public class AtencionMedicaControllerTest {
+    //Configuraciones de los Mocks para simular las solicitudes HTTP al controlador
     @Autowired
     private MockMvc mockMvc;
 
@@ -30,6 +31,7 @@ public class AtencionMedicaControllerTest {
     private AtencionMedica atencionMedica2;
     private Paciente paciente1;
     private Paciente paciente2;
+     //Se ejecuta antes de cada metodo de pruebas
     @BeforeEach
     public void InicializarPruebas(){
         //Inicializar Pacientes
@@ -85,7 +87,7 @@ public class AtencionMedicaControllerTest {
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].nombreMedico").value("Juan Perez"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].diagnostico").value("Estres laboral"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].tratamiento").value("Vacaciones permanentes en el caribe"))
-                .andExpect(jsonPath("$._embedded.atencionMedicaList[0].fechaAtencion").value("2024-04-25"))
+                .andExpect(jsonPath("$._embedded.atencionMedicaList[0].fechaAtencion").value("2024-05-04"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].paciente.idPaciente").value(1))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].paciente.rut").value("10200300-1"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[0].paciente.nombre").value("Manuel"))
@@ -98,7 +100,7 @@ public class AtencionMedicaControllerTest {
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].nombreMedico").value("Fernanda Muñoz"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].diagnostico").value("Covid 19"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].tratamiento").value("Cuarentena por 14 dias"))
-                .andExpect(jsonPath("$._embedded.atencionMedicaList[1].fechaAtencion").value("2024-04-25"))
+                .andExpect(jsonPath("$._embedded.atencionMedicaList[1].fechaAtencion").value("2024-05-04"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].paciente.idPaciente").value(2))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].paciente.rut").value("15111322-9"))
                 .andExpect(jsonPath("$._embedded.atencionMedicaList[1].paciente.nombre").value("Pedro"))
