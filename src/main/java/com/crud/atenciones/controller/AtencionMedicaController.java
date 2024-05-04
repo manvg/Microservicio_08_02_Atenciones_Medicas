@@ -79,33 +79,6 @@ public class AtencionMedicaController {
         }
     }
 
-    //Obtener todas las atenciones médicas de un paciente por su rut
-    // @GetMapping("paciente/{rut}")
-    // public CollectionModel<EntityModel<AtencionMedica>> getAtencionesMedicasByRut(@PathVariable String rut){
-    //     log.info("GET /atenciones/paciente/" + rut + " -> getAtencionesMedicasByRut");
-
-    //     log.info("Validando existencia de rut " + rut);
-    //     var existeRut = pacienteService.getPacienteByRut(rut);
-    //     if (existeRut.isEmpty()) {
-    //         log.error("No existe un paciente con rut " + rut + " no existe");
-    //         throw new GeneralNotFoundException("No existe un paciente con rut " + rut + " no existe");
-    //     }
-
-    //     log.info("Obteniendo atenciones medicas del paciente con rut " + rut);
-    //     var atencionesMedicas = atencionMedicaService.getAtencionesMedicasByRut(rut);
-    //     List<EntityModel<AtencionMedica>> atencionesResources = atencionesMedicas.stream()
-    //         .map( atencion -> EntityModel.of(atencion,
-    //             WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionMedicaById(atencion.getIdAtencionMedica())).withSelfRel()
-    //         ))
-    //         .collect(Collectors.toList());
-
-    //     WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAtencionesMedicasByRut(rut));
-    //     CollectionModel<EntityModel<AtencionMedica>> resources = CollectionModel.of(atencionesResources, linkTo.withRel("atenciones-medicas-by-rut"));
-    //     log.info("Se encontraron " + atencionesMedicas.size() + " atenciones medicas para el paciente con rut " + rut);
-    //     return resources;
-    // }
-
-
     @GetMapping("/by-rango-fecha")
     public CollectionModel<EntityModel<AtencionMedica>> getAtencionMedicaByRangoFecha(@RequestParam(value = "fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio, @RequestParam(value = "fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {
         log.info("GET /atenciones/by-rango-fecha -> getAtencionMedicaByRangoFecha");
